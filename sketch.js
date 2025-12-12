@@ -104,11 +104,8 @@ async function detectFace() {
 }
 
 function setupUI() {
-  // Setup face tracking toggle button
-  const faceToggleBtn = document.getElementById('face-toggle-btn');
-  if (faceToggleBtn) {
-    faceToggleBtn.addEventListener('click', toggleFaceTracking);
-  }
+  // UI panel removed - face tracking controlled via F key only
+  console.log('Press F to toggle face tracking, W to toggle webcam/image mode, Click to save');
 }
 
 function draw() {
@@ -183,29 +180,12 @@ function toggleFaceTracking() {
   
   useFaceTracking = !useFaceTracking;
   
-  // Update UI
-  const btn = document.getElementById('face-toggle-btn');
-  const statusText = document.getElementById('status-text');
-  const controlMode = document.getElementById('control-mode');
-  const faceStatus = document.getElementById('face-status');
-  const faceIcon = document.getElementById('face-icon');
-  
   if (useFaceTracking) {
-    if (btn) btn.textContent = '🖱️ Disable Face Tracking';
-    if (faceIcon) btn.innerHTML = '<span id="face-icon">🖱️</span> Disable Face Tracking';
-    if (statusText) statusText.textContent = 'Face Tracking Active';
-    if (controlMode) controlMode.textContent = 'face';
-    if (faceStatus) faceStatus.classList.add('active');
     cursor(); // Show cursor when in face mode
-    console.log('Face tracking enabled - move your face to paint!');
+    console.log('✅ Face tracking enabled - move your face to paint!');
   } else {
-    if (btn) btn.textContent = '👤 Enable Face Tracking';
-    if (faceIcon) btn.innerHTML = '<span id="face-icon">👤</span> Enable Face Tracking';
-    if (statusText) statusText.textContent = 'Mouse Control';
-    if (controlMode) controlMode.textContent = 'mouse';
-    if (faceStatus) faceStatus.classList.remove('active');
     noCursor();
-    console.log('Face tracking disabled - using mouse control');
+    console.log('🖱️ Face tracking disabled - using mouse control');
   }
 }
 
