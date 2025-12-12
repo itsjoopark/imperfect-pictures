@@ -121,12 +121,12 @@ function gotHands(results) {
     let avgDistance = (d1 + d2 + d3 + d4 + d5) / 5;
     
     // Map to image size (open hand = bigger, closed hand = smaller)
-    // Typical range: 100-300 pixels, adjust based on camera distance
-    imageSize = map(avgDistance, 80, 200, 30, 180);
-    imageSize = constrain(imageSize, 30, 180);
+    // Wider range for more dramatic effect: 15-300 pixels
+    imageSize = map(avgDistance, 80, 200, 15, 300);
+    imageSize = constrain(imageSize, 15, 300);
     
-    // Smooth the size changes
-    smoothedSize = smoothedSize + (imageSize - smoothedSize) * 0.1;
+    // Smooth the size changes (slightly faster for more responsiveness)
+    smoothedSize = smoothedSize + (imageSize - smoothedSize) * 0.15;
   } else {
     handDetected = false;
   }
