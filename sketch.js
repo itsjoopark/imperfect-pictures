@@ -4,12 +4,12 @@ let useWebcam = true;
 let uploadInput;
 let defaultImgPath = '/assets/joo.jpeg';
 
-// Face tracking variables
-let useFaceTracking = false;
-let faceDetection;
-let faceX = 0;
-let faceY = 0;
-let faceDetected = false;
+// Hand tracking variables
+let useHandTracking = false;
+let hands;
+let handX = 0;
+let handY = 0;
+let handDetected = false;
 let videoElement;
 let drawX = 0;
 let drawY = 0;
@@ -44,10 +44,10 @@ function setup() {
     }
   );
 
-  // Initialize MediaPipe Face Detection
-  initFaceDetection();
+  // Initialize MediaPipe Hand Tracking
+  initHandTracking();
   
-  // Set up UI button
+  // Set up UI
   setupUI();
 
   // Save button
@@ -59,67 +59,67 @@ function setup() {
   //uploadInput.position(10, 40);
 }
 
-function initFaceDetection() {
-  if (typeof FaceDetection !== 'undefined') {
-    faceDetection = new FaceDetection({
+function initHandTracking() {
+  if (typeof Hands !== 'undefined') {
+    hands = new Hands({
       locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
       }
     });
     
-    faceDetection.setOptions({
-      model: 'short',
-      minDetectionConfidence: 0.5
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
     });
     
-    faceDetection.onResults(onFaceResults);
-    console.log('MediaPipe Face Detection initialized!');
+    hands.onResults(onHandResults);
+    console.log('MediaPipe Hand Tracking initialized!');
   } else {
-    console.log('MediaPipe not loaded, face tracking disabled');
+    console.log('MediaPipe not loaded, hand tracking disabled');
   }
 }
 
-function onFaceResults(results) {
-  if (results.detections && results.detections.length > 0) {
-    faceDetected = true;
-    const detection = results.detections[0];
-    const bbox = detection.boundingBox;
+function onHandResults(results) {
+  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+    handDetected = true;
+    const landmarks = results.multiHandLandmarks[0];
     
-    // Get center of face
-    const centerX = bbox.xCenter;
-    const centerY = bbox.yCenter;
+    // Use index finger tip (landmark 8) for precise control
+    const indexFingerTip = landmarks[8];
     
-    // Map to canvas coordinates
-    faceX = centerX * width;
-    faceY = centerY * height;
+    // Map to canvas coordinates (flip X for mirror effect)
+    handX = (1 - indexFingerTip.x) * width;
+    handY = indexFingerTip.y * height;
   } else {
-    faceDetected = false;
+    handDetected = false;
   }
 }
 
-async function detectFace() {
-  if (faceDetection && videoElement && videoElement.readyState === 4) {
-    await faceDetection.send({image: videoElement});
+async function detectHand() {
+  if (hands && videoElement && videoElement.readyState === 4) {
+    await hands.send({image: videoElement});
   }
 }
 
 function setupUI() {
-  // UI panel removed - face tracking controlled via F key only
-  console.log('Press F to toggle face tracking, W to toggle webcam/image mode, Click to save');
+  // UI panel removed - hand tracking controlled via H key only
+  console.log('Press H to toggle hand tracking, W to toggle webcam/image mode, Click to save');
 }
 
 function draw() {
   background(244, 243, 239, 2); // subtle trailing effect
 
-  // Detect face if face tracking is enabled
-  if (useFaceTracking && frameCount % 2 === 0) {
-    detectFace();
+  // Detect hand if hand tracking is enabled
+  if (useHandTracking && frameCount % 2 === 0) {
+    detectHand();
   }
 
   // Determine drawing position
-  if (useFaceTracking && faceDetected) {
-    drawX = faceX;
-    drawY = faceY;
+  if (useHandTracking && handDetected) {
+    drawX = handX;
+    drawY = handY;
   } else {
     drawX = mouseX;
     drawY = mouseY;
@@ -144,13 +144,18 @@ function draw() {
     }
   }
   
-  // Visual feedback for face tracking
-  if (useFaceTracking && faceDetected) {
+  // Visual feedback for hand tracking
+  if (useHandTracking && handDetected) {
     push();
     noFill();
-    stroke(100, 200, 100);
+    stroke(100, 200, 255);
+    strokeWeight(3);
+    circle(handX, handY, 25);
+    // Add crosshair for precision
+    stroke(100, 200, 255);
     strokeWeight(2);
-    circle(faceX, faceY, 30);
+    line(handX - 15, handY, handX + 15, handY);
+    line(handX, handY - 15, handX, handY + 15);
     pop();
   }
 }
@@ -166,26 +171,26 @@ function keyPressed() {
     console.log(useWebcam ? "Switched to Webcam mode" : "Switched to Image mode");
   }
   
-  // Toggle face tracking
-  if (key === 'f' || key === 'F') {
-    toggleFaceTracking();
+  // Toggle hand tracking
+  if (key === 'h' || key === 'H') {
+    toggleHandTracking();
   }
 }
 
-function toggleFaceTracking() {
-  if (!faceDetection) {
-    console.log("Face detection not available");
+function toggleHandTracking() {
+  if (!hands) {
+    console.log("Hand tracking not available");
     return;
   }
   
-  useFaceTracking = !useFaceTracking;
+  useHandTracking = !useHandTracking;
   
-  if (useFaceTracking) {
-    cursor(); // Show cursor when in face mode
-    console.log('✅ Face tracking enabled - move your face to paint!');
+  if (useHandTracking) {
+    cursor(); // Show cursor when in hand mode
+    console.log('✅ Hand tracking enabled - point with your index finger to paint!');
   } else {
     noCursor();
-    console.log('🖱️ Face tracking disabled - using mouse control');
+    console.log('🖱️ Hand tracking disabled - using mouse control');
   }
 }
 

@@ -4,14 +4,14 @@ An interactive web-based portrait generator using p5.js. Create unique, glitchy 
 
 ## Features
 
-- 🎨 **Interactive Drawing**: Paint with image slices that follow your mouse or face
-- 👤 **Face Tracking**: Use MediaPipe face detection to control painting with your face movements
+- 🎨 **Interactive Drawing**: Paint with image slices that follow your mouse or hand
+- ✋ **Hand Tracking**: Use MediaPipe hand tracking to control painting with your index finger
 - 📹 **Webcam Integration**: Use your webcam as a live drawing source
 - 🖼️ **Image Mode**: Toggle to use a static image instead
 - 💾 **Save Your Work**: Click anywhere to save your creation as a JPEG
 - 🎭 **Grayscale Filter**: Automatic grayscale effect for an artistic look
 - ✨ **Trailing Effect**: Subtle fade creates a dreamy, layered appearance
-- 🔄 **Dual Control Modes**: Switch seamlessly between mouse and face tracking
+- 🔄 **Dual Control Modes**: Switch seamlessly between mouse and hand tracking
 
 ## Getting Started
 
@@ -71,7 +71,7 @@ php -S localhost:8000
 
 All controls are keyboard-based for a minimal, distraction-free experience:
 
-- **Press F**: Toggle between mouse and face tracking mode
+- **Press H**: Toggle between mouse and hand tracking mode
 - **Press W**: Toggle between webcam and image mode
 - **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
 
@@ -79,11 +79,12 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 - Move your mouse to paint with image slices
 - Slice size varies based on mouse position (10-200px)
 
-#### Face Tracking Mode
-- Press **F** to enable
-- Move your face to paint - the center of your face controls the brush
-- Green circle appears when your face is detected
-- Move closer/farther, tilt, or turn your head for different effects
+#### Hand Tracking Mode
+- Press **H** to enable
+- Point with your index finger to paint - your fingertip controls the brush
+- Blue crosshair appears when your hand is detected
+- Move your hand around in front of the camera to create your portrait
+- Works best with one hand clearly visible to the camera
 
 ### Tips for Best Results
 
@@ -93,12 +94,15 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 4. **The size of each slice** is determined by your cursor position (10-200px)
 5. **Click to save** whenever you're happy with your creation
 
-#### Face Tracking Tips
-1. **Good lighting is key** - make sure your face is well-lit for better detection
-2. **Position yourself** at a comfortable distance from the camera
-3. **Experiment with head movements** - tilts, turns, and forward/backward motions create different effects
-4. **Combine with mouse mode** - switch between face and mouse for varied compositions
-5. **The green circle** shows where your face center is detected
+#### Hand Tracking Tips
+1. **Good lighting is key** - make sure your hand is well-lit for better detection
+2. **Show your palm** - camera should see your hand clearly with fingers visible
+3. **Use your index finger** - point where you want to paint, fingertip controls the position
+4. **Experiment with gestures** - move your hand in sweeping motions, circles, or quick dabs
+5. **Distance matters** - being too close or too far can affect tracking accuracy
+6. **One hand works best** - tracking is optimized for single hand detection
+7. **The blue crosshair** shows where your index fingertip is detected
+8. **Combine with mouse mode** - switch between hand and mouse for varied compositions
 
 ## Customization
 
@@ -157,7 +161,7 @@ imperfect-pictures/
 ## Technologies Used
 
 - [p5.js](https://p5js.org/) - Creative coding library
-- [MediaPipe Face Detection](https://google.github.io/mediapipe/solutions/face_detection.html) - Real-time face tracking
+- [MediaPipe Hands](https://google.github.io/mediapipe/solutions/hands.html) - Real-time hand tracking
 - HTML5 Canvas
 - WebRTC (for webcam access)
 - JavaScript ES6+
@@ -176,12 +180,14 @@ imperfect-pictures/
 - Try using HTTPS (required by some browsers)
 - Check if another application is using your webcam
 
-### Face tracking not working
-- **Check camera permissions**: Face tracking requires webcam access
-- **Good lighting**: Ensure your face is well-lit and visible
+### Hand tracking not working
+- **Check camera permissions**: Hand tracking requires webcam access
+- **Good lighting**: Ensure your hand is well-lit and clearly visible
+- **Show your palm**: Make sure fingers are spread and visible to camera
 - **Browser compatibility**: Works best in Chrome/Edge
 - **Console errors**: Press F12 and check for MediaPipe loading errors
-- **Distance**: Try adjusting your distance from the camera
+- **Distance**: Try adjusting your distance from the camera (arm's length is good)
+- **One hand**: Use only one hand for best results
 - **Refresh**: Sometimes reloading the page helps initialize MediaPipe
 
 ### Image not loading
@@ -195,23 +201,24 @@ imperfect-pictures/
 - Try a different browser
 
 ### Performance issues
-- Face detection runs every other frame to maintain performance
+- Hand tracking runs every other frame to maintain performance
 - Close other camera-using applications
-- Try disabling face tracking if experiencing lag
+- Try disabling hand tracking if experiencing lag
 
 ## Future Enhancements
 
 Potential features to add:
-- ✅ ~~Face tracking control~~ (Implemented!)
+- ✅ ~~Hand tracking control~~ (Implemented!)
 - Color mode toggle
 - Adjustable brush size controls
 - Multiple filter options
-- Hand tracking for gestures
+- Gesture recognition (pinch to change size, etc.)
+- Two-hand support for multi-point drawing
 - Full body pose detection
 - Recording/animation export
 - Touch support for mobile
 - Gallery of saved portraits
-- Multiple face tracking (collaborative portraits)
+- Collaborative portraits with multiple people
 
 ## License
 
