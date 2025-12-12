@@ -1,0 +1,22 @@
+{
+  "name": "imperfect-pictures",
+  "version": "1.0.0",
+  "description": "An interactive web-based portrait generator using p5.js",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "dev": "npx http-server -p 8000 -o"
+  },
+  "keywords": [
+    "p5js",
+    "creative-coding",
+    "interactive-art",
+    "webcam",
+    "portrait-generator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
+
