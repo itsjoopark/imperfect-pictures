@@ -16,7 +16,11 @@ let drawY = 0;
 // Smoothing variables
 let smoothedHandX = 0;
 let smoothedHandY = 0;
-let smoothing = 0.3; // Lower = smoother but more lag, higher = more responsive
+let smoothing = 0.15; // Lower = smoother/slower, higher = more responsive
+// Hand size variables
+let handOpenness = 0;
+let imageSize = 100; // Default image size
+let smoothedSize = 100;
 
 function preload() {
   // Initialize ml5 handPose model
@@ -65,7 +69,12 @@ function setup() {
 
 function setupUI() {
   // UI panel removed - hand tracking controlled via H key only
-  console.log('✋ Press H to toggle hand tracking, W to toggle webcam/image mode, Click to save');
+  console.log('✋ Controls:');
+  console.log('  H = Toggle hand tracking');
+  console.log('  W = Toggle webcam/image');
+  console.log('  Click = Save as friendswemade.jpg');
+  console.log('  Open hand = Bigger images 🖐️');
+  console.log('  Close fist = Smaller images ✊');
 }
 
 // Callback function for when handPose detects hands
@@ -91,6 +100,33 @@ function gotHands(results) {
     
     handX = smoothedHandX;
     handY = smoothedHandY;
+    
+    // Calculate hand openness based on finger spread
+    // Measure average distance from wrist (keypoint 0) to fingertips
+    let wrist = hand.keypoints[0];
+    let thumbTip = hand.keypoints[4];
+    let indexTip = hand.keypoints[8];
+    let middleTip = hand.keypoints[12];
+    let ringTip = hand.keypoints[16];
+    let pinkyTip = hand.keypoints[20];
+    
+    // Calculate distances
+    let d1 = dist(wrist.x, wrist.y, thumbTip.x, thumbTip.y);
+    let d2 = dist(wrist.x, wrist.y, indexTip.x, indexTip.y);
+    let d3 = dist(wrist.x, wrist.y, middleTip.x, middleTip.y);
+    let d4 = dist(wrist.x, wrist.y, ringTip.x, ringTip.y);
+    let d5 = dist(wrist.x, wrist.y, pinkyTip.x, pinkyTip.y);
+    
+    // Average distance (normalized)
+    let avgDistance = (d1 + d2 + d3 + d4 + d5) / 5;
+    
+    // Map to image size (open hand = bigger, closed hand = smaller)
+    // Typical range: 100-300 pixels, adjust based on camera distance
+    imageSize = map(avgDistance, 80, 200, 30, 180);
+    imageSize = constrain(imageSize, 30, 180);
+    
+    // Smooth the size changes
+    smoothedSize = smoothedSize + (imageSize - smoothedSize) * 0.1;
   } else {
     handDetected = false;
   }
@@ -112,15 +148,24 @@ function draw() {
 
   // Check if source is ready and valid
   if (source && drawX > 0 && drawY > 0) {
+    // Determine image dimensions
+    let w, h;
+    
+    if (useHandTracking && handDetected) {
+      // Use hand openness to control size
+      w = smoothedSize;
+      h = smoothedSize;
+    } else {
+      // Use mouse position for size (original behavior)
+      w = constrain(drawX % 200, 10, 200);
+      h = constrain(drawY % 200, 10, 200);
+    }
+    
     // For video, make sure it's loaded
     if (useWebcam && video.loadedmetadata) {
-      let w = constrain(drawX % 200, 10, 200);
-      let h = constrain(drawY % 200, 10, 200);
       image(source, drawX, drawY, w, h);
     } else if (!useWebcam && img) {
       // For image mode
-      let w = constrain(drawX % 200, 10, 200);
-      let h = constrain(drawY % 200, 10, 200);
       image(source, drawX, drawY, w, h);
     }
   }
@@ -175,5 +220,6 @@ function handleFile(file) {
 
 function mouseClicked() {
   // This function is called when the mouse is clicked
-  saveCanvas('selfportrait_camgirl', 'jpg'); // Saves the canvas as 'myCanvasImage.png'
+  saveCanvas('friendswemade', 'jpg');
+  console.log('💾 Saved as friendswemade.jpg');
 }
