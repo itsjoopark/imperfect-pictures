@@ -5,7 +5,9 @@ let uploadInput;
 let defaultImgPath = '/assets/joo.jpeg';
 
 function preload() {
-  img = loadImage(defaultImgPath); // Load default image
+  // Optional: Load default image if it exists
+  // Comment this out if you don't have a default image
+  // img = loadImage(defaultImgPath);
 }
 
 function setup() {
@@ -13,17 +15,21 @@ function setup() {
   background(244, 243, 239);
   noCursor(); 
 
-  // Initialize webcam (hidden by default)
+  // Initialize webcam
   video = createCapture(VIDEO);
   video.size(width, height);
   video.hide();
-
-  // Draw initial image slices
-  for (let i = 0; i < 10; i++) {
-    let x = random(width);
-    let y = random(height);
-    image(video, x, y, 10, 10);
-  }
+  
+  // Optional: Load default image asynchronously (won't block if missing)
+  loadImage(defaultImgPath, 
+    (loadedImg) => {
+      img = loadedImg;
+      console.log('Default image loaded successfully!');
+    },
+    (err) => {
+      console.log('No default image found. Webcam mode only.');
+    }
+  );
 
   // Save button
   //let saveButton = createButton('Download Portrait');
@@ -39,19 +45,33 @@ function draw() {
 
   let source = useWebcam ? video : img;
 
+  // Check if source is ready and valid
   if (source && mouseX > 0 && mouseY > 0) {
-    let w = constrain(mouseX % 200, 10, 200);
-    let h = constrain(mouseY % 200, 10, 200);
-    image(source, mouseX, mouseY, w, h);
-    filter(GRAY);
+    // For video, make sure it's loaded
+    if (useWebcam && video.loadedmetadata) {
+      let w = constrain(mouseX % 200, 10, 200);
+      let h = constrain(mouseY % 200, 10, 200);
+      image(source, mouseX, mouseY, w, h);
+      filter(GRAY);
+    } else if (!useWebcam && img) {
+      // For image mode
+      let w = constrain(mouseX % 200, 10, 200);
+      let h = constrain(mouseY % 200, 10, 200);
+      image(source, mouseX, mouseY, w, h);
+      filter(GRAY);
+    }
   }
 }
 
 function keyPressed() {
   // Toggle between webcam and image
   if (key === 'w' || key === 'W') {
+    if (!useWebcam && !img) {
+      console.log("Cannot switch to image mode: No image loaded");
+      return;
+    }
     useWebcam = !useWebcam;
-    console.log("Webcam mode:", useWebcam);
+    console.log(useWebcam ? "Switched to Webcam mode" : "Switched to Image mode");
   }
 }
 
