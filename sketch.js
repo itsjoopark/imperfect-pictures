@@ -21,6 +21,11 @@ let smoothing = 0.15; // Lower = smoother/slower, higher = more responsive
 let handOpenness = 0;
 let imageSize = 100; // Default image size
 let smoothedSize = 100;
+// Recording variables
+let isRecording = false;
+let mediaRecorder;
+let recordedChunks = [];
+let canvasStream;
 
 function preload() {
   // Initialize ml5 handPose model
@@ -72,6 +77,7 @@ function setupUI() {
   console.log('✋ Controls:');
   console.log('  H = Toggle hand tracking');
   console.log('  W = Toggle webcam/image');
+  console.log('  R = Start/Stop recording 🎥');
   console.log('  Click = Save as friendswemade.jpg');
   console.log('  Open hand = Bigger images 🖐️');
   console.log('  Close fist = Smaller images ✊');
@@ -171,6 +177,19 @@ function draw() {
   }
   
   // No visual feedback - clean interface
+  
+  // Recording indicator
+  if (isRecording) {
+    push();
+    fill(255, 0, 0);
+    noStroke();
+    circle(30, 30, 20);
+    fill(255);
+    textSize(12);
+    textAlign(LEFT, CENTER);
+    text('REC', 45, 30);
+    pop();
+  }
 }
 
 function keyPressed() {
@@ -187,6 +206,11 @@ function keyPressed() {
   // Toggle hand tracking
   if (key === 'h' || key === 'H') {
     toggleHandTracking();
+  }
+  
+  // Toggle recording
+  if (key === 'r' || key === 'R') {
+    toggleRecording();
   }
 }
 
@@ -226,4 +250,74 @@ function mouseClicked() {
   // Reset canvas to blank after saving
   background(244, 243, 239);
   console.log('🎨 Canvas reset - ready for new portrait!');
+}
+
+function toggleRecording() {
+  if (!isRecording) {
+    startRecording();
+  } else {
+    stopRecording();
+  }
+}
+
+function startRecording() {
+  // Get canvas stream
+  const canvas = document.querySelector('canvas');
+  canvasStream = canvas.captureStream(30); // 30 fps
+  
+  // Set up MediaRecorder
+  const options = {
+    mimeType: 'video/webm;codecs=vp9',
+    videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
+  };
+  
+  // Fallback for browsers that don't support vp9
+  if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+    options.mimeType = 'video/webm';
+  }
+  
+  recordedChunks = [];
+  mediaRecorder = new MediaRecorder(canvasStream, options);
+  
+  mediaRecorder.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+  
+  mediaRecorder.onstop = () => {
+    saveRecording();
+  };
+  
+  mediaRecorder.start();
+  isRecording = true;
+  console.log('🎥 Recording started! Press R again to stop.');
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    isRecording = false;
+    console.log('⏹️ Recording stopped! Saving video...');
+  }
+}
+
+function saveRecording() {
+  const blob = new Blob(recordedChunks, { type: 'video/webm' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = 'friendswemade_recording.webm';
+  document.body.appendChild(a);
+  a.click();
+  
+  // Clean up
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
+  
+  console.log('💾 Video saved as friendswemade_recording.webm');
+  console.log('   (Note: WebM format - can be converted to MP4 if needed)');
 }

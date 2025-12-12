@@ -9,6 +9,7 @@ An interactive web-based portrait generator using p5.js. Create unique, glitchy 
 - 📹 **Webcam Integration**: Use your webcam as a live drawing source
 - 🖼️ **Image Mode**: Toggle to use a static image instead
 - 💾 **Save Your Work**: Click anywhere to save your creation as a JPEG
+- 🎥 **Screen Recording**: Record your creative process and save as video
 - 🎭 **Grayscale Filter**: Automatic grayscale effect for an artistic look
 - ✨ **Trailing Effect**: Subtle fade creates a dreamy, layered appearance
 - 🔄 **Dual Control Modes**: Switch seamlessly between mouse and hand tracking
@@ -73,6 +74,7 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 
 - **Press H**: Toggle between mouse and hand tracking mode
 - **Press W**: Toggle between webcam and image mode
+- **Press R**: Start/Stop screen recording (saves as WebM video)
 - **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
 
 #### Mouse Mode (Default)
@@ -82,18 +84,26 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 #### Hand Tracking Mode (ml5.js)
 - Press **H** to enable
 - Point with your index finger to paint - your fingertip controls the brush
-- Blue crosshair appears when your hand is detected
 - Move your hand around in front of the camera to create your portrait
 - Works best with one hand clearly visible to the camera
 - ml5.js provides smooth, reliable hand tracking with minimal setup
+
+#### Recording Mode
+- Press **R** to start recording your canvas
+- Red "REC" indicator appears in top-left corner
+- Press **R** again to stop and automatically save
+- Saves as `friendswemade_recording.webm` to Downloads
+- Records at 30fps with high quality (2.5 Mbps bitrate)
+- WebM format (can be converted to MP4 using online tools if needed)
 
 ### Tips for Best Results
 
 1. **Start with slow movements** to build up layers gradually
 2. **Try different speeds** - fast movements create more chaotic patterns
 3. **Toggle between modes** (W key) to mix webcam and static image
-4. **The size of each slice** is determined by your cursor position (10-200px)
+4. **The size of each slice** is determined by your cursor position or hand gesture
 5. **Click to save** whenever you're happy with your creation
+6. **Record your process** (R key) to capture the creation journey as a video
 
 #### Hand Tracking Tips
 1. **Good lighting is key** - make sure your hand is well-lit for better detection
@@ -212,13 +222,13 @@ imperfect-pictures/
 
 Potential features to add:
 - ✅ ~~Hand tracking control~~ (Implemented!)
+- ✅ ~~Recording/video export~~ (Implemented!)
 - Color mode toggle
 - Adjustable brush size controls
 - Multiple filter options
-- Gesture recognition (pinch to change size, etc.)
 - Two-hand support for multi-point drawing
 - Full body pose detection
-- Recording/animation export
+- MP4 export option (currently WebM)
 - Touch support for mobile
 - Gallery of saved portraits
 - Collaborative portraits with multiple people
