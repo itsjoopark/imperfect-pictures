@@ -4,6 +4,16 @@ let useWebcam = true;
 let uploadInput;
 let defaultImgPath = '/assets/joo.jpeg';
 
+// Face tracking variables
+let useFaceTracking = false;
+let faceDetection;
+let faceX = 0;
+let faceY = 0;
+let faceDetected = false;
+let videoElement;
+let drawX = 0;
+let drawY = 0;
+
 function preload() {
   // Optional: Load default image if it exists
   // Comment this out if you don't have a default image
@@ -20,6 +30,9 @@ function setup() {
   video.size(width, height);
   video.hide();
   
+  // Get the underlying video element for MediaPipe
+  videoElement = video.elt;
+  
   // Optional: Load default image asynchronously (won't block if missing)
   loadImage(defaultImgPath, 
     (loadedImg) => {
@@ -31,6 +44,12 @@ function setup() {
     }
   );
 
+  // Initialize MediaPipe Face Detection
+  initFaceDetection();
+  
+  // Set up UI button
+  setupUI();
+
   // Save button
   //let saveButton = createButton('Download Portrait');
   //saveButton.mousePressed(saveImage);
@@ -40,26 +59,102 @@ function setup() {
   //uploadInput.position(10, 40);
 }
 
+function initFaceDetection() {
+  if (typeof FaceDetection !== 'undefined') {
+    faceDetection = new FaceDetection({
+      locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+      }
+    });
+    
+    faceDetection.setOptions({
+      model: 'short',
+      minDetectionConfidence: 0.5
+    });
+    
+    faceDetection.onResults(onFaceResults);
+    console.log('MediaPipe Face Detection initialized!');
+  } else {
+    console.log('MediaPipe not loaded, face tracking disabled');
+  }
+}
+
+function onFaceResults(results) {
+  if (results.detections && results.detections.length > 0) {
+    faceDetected = true;
+    const detection = results.detections[0];
+    const bbox = detection.boundingBox;
+    
+    // Get center of face
+    const centerX = bbox.xCenter;
+    const centerY = bbox.yCenter;
+    
+    // Map to canvas coordinates
+    faceX = centerX * width;
+    faceY = centerY * height;
+  } else {
+    faceDetected = false;
+  }
+}
+
+async function detectFace() {
+  if (faceDetection && videoElement && videoElement.readyState === 4) {
+    await faceDetection.send({image: videoElement});
+  }
+}
+
+function setupUI() {
+  // Setup face tracking toggle button
+  const faceToggleBtn = document.getElementById('face-toggle-btn');
+  if (faceToggleBtn) {
+    faceToggleBtn.addEventListener('click', toggleFaceTracking);
+  }
+}
+
 function draw() {
   background(244, 243, 239, 2); // subtle trailing effect
+
+  // Detect face if face tracking is enabled
+  if (useFaceTracking && frameCount % 2 === 0) {
+    detectFace();
+  }
+
+  // Determine drawing position
+  if (useFaceTracking && faceDetected) {
+    drawX = faceX;
+    drawY = faceY;
+  } else {
+    drawX = mouseX;
+    drawY = mouseY;
+  }
 
   let source = useWebcam ? video : img;
 
   // Check if source is ready and valid
-  if (source && mouseX > 0 && mouseY > 0) {
+  if (source && drawX > 0 && drawY > 0) {
     // For video, make sure it's loaded
     if (useWebcam && video.loadedmetadata) {
-      let w = constrain(mouseX % 200, 10, 200);
-      let h = constrain(mouseY % 200, 10, 200);
-      image(source, mouseX, mouseY, w, h);
+      let w = constrain(drawX % 200, 10, 200);
+      let h = constrain(drawY % 200, 10, 200);
+      image(source, drawX, drawY, w, h);
       filter(GRAY);
     } else if (!useWebcam && img) {
       // For image mode
-      let w = constrain(mouseX % 200, 10, 200);
-      let h = constrain(mouseY % 200, 10, 200);
-      image(source, mouseX, mouseY, w, h);
+      let w = constrain(drawX % 200, 10, 200);
+      let h = constrain(drawY % 200, 10, 200);
+      image(source, drawX, drawY, w, h);
       filter(GRAY);
     }
+  }
+  
+  // Visual feedback for face tracking
+  if (useFaceTracking && faceDetected) {
+    push();
+    noFill();
+    stroke(100, 200, 100);
+    strokeWeight(2);
+    circle(faceX, faceY, 30);
+    pop();
   }
 }
 
@@ -72,6 +167,45 @@ function keyPressed() {
     }
     useWebcam = !useWebcam;
     console.log(useWebcam ? "Switched to Webcam mode" : "Switched to Image mode");
+  }
+  
+  // Toggle face tracking
+  if (key === 'f' || key === 'F') {
+    toggleFaceTracking();
+  }
+}
+
+function toggleFaceTracking() {
+  if (!faceDetection) {
+    console.log("Face detection not available");
+    return;
+  }
+  
+  useFaceTracking = !useFaceTracking;
+  
+  // Update UI
+  const btn = document.getElementById('face-toggle-btn');
+  const statusText = document.getElementById('status-text');
+  const controlMode = document.getElementById('control-mode');
+  const faceStatus = document.getElementById('face-status');
+  const faceIcon = document.getElementById('face-icon');
+  
+  if (useFaceTracking) {
+    if (btn) btn.textContent = '🖱️ Disable Face Tracking';
+    if (faceIcon) btn.innerHTML = '<span id="face-icon">🖱️</span> Disable Face Tracking';
+    if (statusText) statusText.textContent = 'Face Tracking Active';
+    if (controlMode) controlMode.textContent = 'face';
+    if (faceStatus) faceStatus.classList.add('active');
+    cursor(); // Show cursor when in face mode
+    console.log('Face tracking enabled - move your face to paint!');
+  } else {
+    if (btn) btn.textContent = '👤 Enable Face Tracking';
+    if (faceIcon) btn.innerHTML = '<span id="face-icon">👤</span> Enable Face Tracking';
+    if (statusText) statusText.textContent = 'Mouse Control';
+    if (controlMode) controlMode.textContent = 'mouse';
+    if (faceStatus) faceStatus.classList.remove('active');
+    noCursor();
+    console.log('Face tracking disabled - using mouse control');
   }
 }
 

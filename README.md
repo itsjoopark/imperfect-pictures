@@ -4,12 +4,14 @@ An interactive web-based portrait generator using p5.js. Create unique, glitchy 
 
 ## Features
 
-- 🎨 **Interactive Drawing**: Paint with image slices that follow your mouse
+- 🎨 **Interactive Drawing**: Paint with image slices that follow your mouse or face
+- 👤 **Face Tracking**: Use MediaPipe face detection to control painting with your face movements
 - 📹 **Webcam Integration**: Use your webcam as a live drawing source
 - 🖼️ **Image Mode**: Toggle to use a static image instead
 - 💾 **Save Your Work**: Click anywhere to save your creation as a JPEG
 - 🎭 **Grayscale Filter**: Automatic grayscale effect for an artistic look
 - ✨ **Trailing Effect**: Subtle fade creates a dreamy, layered appearance
+- 🔄 **Dual Control Modes**: Switch seamlessly between mouse and face tracking
 
 ## Getting Started
 
@@ -67,17 +69,34 @@ php -S localhost:8000
 
 ### Controls
 
+#### Mouse Mode (Default)
 - **Move Mouse**: Paint with image slices - size varies based on mouse position
-- **Press W**: Toggle between webcam and image mode
 - **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
+
+#### Face Tracking Mode
+- **Press F** or **Click "Enable Face Tracking" button**: Toggle face tracking on/off
+- **Move Your Face**: Paint by moving your head - the center of your face controls the brush
+- **Green Circle**: Appears when your face is detected
+- **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
+
+#### General Controls
+- **Press W**: Toggle between webcam and image mode
+- **Press F**: Toggle between mouse and face tracking mode
 
 ### Tips for Best Results
 
 1. **Start with slow movements** to build up layers gradually
 2. **Try different speeds** - fast movements create more chaotic patterns
 3. **Toggle between modes** (W key) to mix webcam and static image
-4. **The size of each slice** is determined by your mouse position (10-200px)
+4. **The size of each slice** is determined by your cursor position (10-200px)
 5. **Click to save** whenever you're happy with your creation
+
+#### Face Tracking Tips
+1. **Good lighting is key** - make sure your face is well-lit for better detection
+2. **Position yourself** at a comfortable distance from the camera
+3. **Experiment with head movements** - tilts, turns, and forward/backward motions create different effects
+4. **Combine with mouse mode** - switch between face and mouse for varied compositions
+5. **The green circle** shows where your face center is detected
 
 ## Customization
 
@@ -136,8 +155,10 @@ imperfect-pictures/
 ## Technologies Used
 
 - [p5.js](https://p5js.org/) - Creative coding library
+- [MediaPipe Face Detection](https://google.github.io/mediapipe/solutions/face_detection.html) - Real-time face tracking
 - HTML5 Canvas
 - WebRTC (for webcam access)
+- JavaScript ES6+
 
 ## Browser Compatibility
 
@@ -153,6 +174,14 @@ imperfect-pictures/
 - Try using HTTPS (required by some browsers)
 - Check if another application is using your webcam
 
+### Face tracking not working
+- **Check camera permissions**: Face tracking requires webcam access
+- **Good lighting**: Ensure your face is well-lit and visible
+- **Browser compatibility**: Works best in Chrome/Edge
+- **Console errors**: Press F12 and check for MediaPipe loading errors
+- **Distance**: Try adjusting your distance from the camera
+- **Refresh**: Sometimes reloading the page helps initialize MediaPipe
+
 ### Image not loading
 - Verify the image exists in `/assets` folder
 - Check the file name matches `defaultImgPath` in sketch.js
@@ -163,15 +192,24 @@ imperfect-pictures/
 - Check browser console for errors (F12)
 - Try a different browser
 
+### Performance issues
+- Face detection runs every other frame to maintain performance
+- Close other camera-using applications
+- Try disabling face tracking if experiencing lag
+
 ## Future Enhancements
 
 Potential features to add:
+- ✅ ~~Face tracking control~~ (Implemented!)
 - Color mode toggle
 - Adjustable brush size controls
 - Multiple filter options
+- Hand tracking for gestures
+- Full body pose detection
 - Recording/animation export
 - Touch support for mobile
 - Gallery of saved portraits
+- Multiple face tracking (collaborative portraits)
 
 ## License
 

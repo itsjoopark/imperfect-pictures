@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Imperfect Pictures - Interactive Portrait</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,12 +17,20 @@
     <div class="instructions">
       <p><strong>How to use:</strong></p>
       <ul>
-        <li>Move your mouse to paint with image slices</li>
+        <li>Move your <strong id="control-mode">mouse</strong> to paint with image slices</li>
+        <li>Press <kbd>F</kbd> to toggle face tracking mode</li>
         <li>Press <kbd>W</kbd> to toggle between webcam and image</li>
         <li>Click anywhere to save your portrait</li>
       </ul>
     </div>
     <div class="controls">
+      <button id="face-toggle-btn" class="control-btn">
+        <span id="face-icon">👤</span> Enable Face Tracking
+      </button>
+      <div id="face-status" class="status-indicator">
+        <span class="status-dot"></span>
+        <span id="status-text">Mouse Control</span>
+      </div>
       <!-- Uncomment to enable file upload -->
       <!-- <input type="file" id="upload-input" accept="image/*"> -->
     </div>
