@@ -361,70 +361,109 @@ function toggleGifRecording() {
 }
 
 function startGifRecording() {
-  // Initialize GIF encoder with quality settings for 15MB max
-  gifEncoder = new GIF({
-    workers: 2,
-    quality: 10, // 1-30, lower = better quality but larger file
-    width: width,
-    height: height,
-    workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
-  });
+  // Check if GIF library is available
+  if (typeof GIF === 'undefined') {
+    console.error('❌ GIF library not loaded! Cannot record GIF.');
+    alert('GIF library failed to load. Please refresh the page and try again.');
+    return;
+  }
   
-  gifEncoder.on('finished', function(blob) {
-    // Check file size
-    const sizeMB = blob.size / (1024 * 1024);
-    console.log(`📊 GIF size: ${sizeMB.toFixed(2)} MB`);
+  try {
+    // Initialize GIF encoder with quality settings for 15MB max
+    gifEncoder = new GIF({
+      workers: 2,
+      quality: 10, // 1-30, lower = better quality but larger file
+      width: width,
+      height: height,
+      workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js',
+      debug: false
+    });
     
-    if (sizeMB > 15) {
-      console.log('⚠️ Warning: GIF exceeds 15MB. Consider recording shorter duration.');
-    }
+    gifEncoder.on('finished', function(blob) {
+      // Check file size
+      const sizeMB = blob.size / (1024 * 1024);
+      console.log(`📊 GIF size: ${sizeMB.toFixed(2)} MB`);
+      
+      if (sizeMB > 15) {
+        console.log('⚠️ Warning: GIF exceeds 15MB. Consider recording shorter duration.');
+      }
+      
+      // Save the GIF
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'friendswemade.gif';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      console.log('✅ GIF saved as friendswemade.gif to your Downloads folder!');
+    });
     
-    // Save the GIF
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'friendswemade.gif';
-    document.body.appendChild(a);
-    a.click();
+    gifEncoder.on('progress', function(progress) {
+      console.log(`🎬 Rendering GIF: ${Math.round(progress * 100)}%`);
+    });
     
-    // Clean up
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-    
-    console.log('💾 GIF saved as friendswemade.gif');
-  });
-  
-  gifFrameCount = 0;
-  isRecordingGif = true;
-  console.log('📸 GIF recording started! (Max 10 seconds at 15fps)');
-  console.log('   Press G again to stop, or recording will auto-stop at max frames.');
+    gifFrameCount = 0;
+    isRecordingGif = true;
+    console.log('📸 GIF recording started! (Max 10 seconds at 15fps)');
+    console.log('   Press G again to stop, or recording will auto-stop at max frames.');
+  } catch (error) {
+    console.error('❌ Error starting GIF recording:', error);
+    alert('Failed to start GIF recording. Check console for details.');
+  }
 }
 
 function stopGifRecording() {
-  if (isRecordingGif) {
+  if (isRecordingGif && gifEncoder) {
     isRecordingGif = false;
-    console.log('⏹️ GIF recording stopped! Rendering GIF...');
-    console.log('   This may take a moment...');
-    gifEncoder.render();
+    
+    if (gifFrameCount === 0) {
+      console.log('⚠️ No frames captured! GIF recording cancelled.');
+      return;
+    }
+    
+    console.log(`⏹️ GIF recording stopped! Captured ${gifFrameCount} frames.`);
+    console.log('   Rendering GIF... This may take 10-30 seconds...');
+    
+    try {
+      gifEncoder.render();
+    } catch (error) {
+      console.error('❌ Error rendering GIF:', error);
+      alert('Failed to render GIF. Check console for details.');
+    }
   }
 }
 
 function captureGifFrame() {
+  if (!gifEncoder || !isRecordingGif) {
+    return;
+  }
+  
   if (gifFrameCount >= gifMaxFrames) {
     // Auto-stop if max frames reached
+    console.log('⏰ Max frames reached! Stopping recording...');
     stopGifRecording();
     return;
   }
   
-  // Get canvas element and add frame to GIF
-  const canvas = document.querySelector('canvas');
-  gifEncoder.addFrame(canvas, {
-    delay: gifFrameDelay,
-    copy: true
-  });
-  
-  gifFrameCount++;
+  try {
+    // Get canvas element and add frame to GIF
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      gifEncoder.addFrame(canvas, {
+        delay: gifFrameDelay,
+        copy: true
+      });
+      gifFrameCount++;
+    }
+  } catch (error) {
+    console.error('❌ Error capturing GIF frame:', error);
+  }
 }
