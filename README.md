@@ -69,19 +69,21 @@ php -S localhost:8000
 
 ### Controls
 
-#### Mouse Mode (Default)
-- **Move Mouse**: Paint with image slices - size varies based on mouse position
+All controls are keyboard-based for a minimal, distraction-free experience:
+
+- **Press F**: Toggle between mouse and face tracking mode
+- **Press W**: Toggle between webcam and image mode
 - **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
+
+#### Mouse Mode (Default)
+- Move your mouse to paint with image slices
+- Slice size varies based on mouse position (10-200px)
 
 #### Face Tracking Mode
-- **Press F** or **Click "Enable Face Tracking" button**: Toggle face tracking on/off
-- **Move Your Face**: Paint by moving your head - the center of your face controls the brush
-- **Green Circle**: Appears when your face is detected
-- **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
-
-#### General Controls
-- **Press W**: Toggle between webcam and image mode
-- **Press F**: Toggle between mouse and face tracking mode
+- Press **F** to enable
+- Move your face to paint - the center of your face controls the brush
+- Green circle appears when your face is detected
+- Move closer/farther, tilt, or turn your head for different effects
 
 ### Tips for Best Results
 
