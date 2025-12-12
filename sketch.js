@@ -26,12 +26,6 @@ let isRecording = false;
 let mediaRecorder;
 let recordedChunks = [];
 let canvasStream;
-// GIF recording variables
-let isRecordingGif = false;
-let gifEncoder;
-let gifFrameCount = 0;
-let gifMaxFrames = 150; // 10 seconds at 15fps
-let gifFrameDelay = 66; // ~15fps (1000ms / 15)
 
 function preload() {
   // Initialize ml5 handPose model
@@ -84,7 +78,6 @@ function setupUI() {
   console.log('  H = Toggle hand tracking');
   console.log('  W = Toggle webcam/image');
   console.log('  R = Start/Stop video recording 🎥');
-  console.log('  G = Start/Stop GIF recording 📸');
   console.log('  Click = Save as friendswemade.jpg');
   console.log('  Open hand = Bigger images 🖐️');
   console.log('  Close fist = Smaller images ✊');
@@ -197,24 +190,6 @@ function draw() {
     text('REC', 45, 30);
     pop();
   }
-  
-  // GIF recording indicator
-  if (isRecordingGif) {
-    push();
-    fill(255, 100, 0);
-    noStroke();
-    circle(30, 60, 20);
-    fill(255);
-    textSize(11);
-    textAlign(LEFT, CENTER);
-    text('GIF ' + gifFrameCount + '/' + gifMaxFrames, 45, 60);
-    pop();
-  }
-  
-  // Capture frame for GIF if recording
-  if (isRecordingGif && frameCount % Math.round(60 / 15) === 0) {
-    captureGifFrame();
-  }
 }
 
 function keyPressed() {
@@ -236,11 +211,6 @@ function keyPressed() {
   // Toggle video recording
   if (key === 'r' || key === 'R') {
     toggleRecording();
-  }
-  
-  // Toggle GIF recording
-  if (key === 'g' || key === 'G') {
-    toggleGifRecording();
   }
 }
 
@@ -350,120 +320,4 @@ function saveRecording() {
   
   console.log('💾 Video saved as friendswemade_recording.webm');
   console.log('   (Note: WebM format - can be converted to MP4 if needed)');
-}
-
-function toggleGifRecording() {
-  if (!isRecordingGif) {
-    startGifRecording();
-  } else {
-    stopGifRecording();
-  }
-}
-
-function startGifRecording() {
-  // Check if GIF library is available
-  if (typeof GIF === 'undefined') {
-    console.error('❌ GIF library not loaded! Cannot record GIF.');
-    alert('GIF library failed to load. Please refresh the page and try again.');
-    return;
-  }
-  
-  try {
-    // Initialize GIF encoder with quality settings for 15MB max
-    gifEncoder = new GIF({
-      workers: 2,
-      quality: 10, // 1-30, lower = better quality but larger file
-      width: width,
-      height: height,
-      workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js',
-      debug: false
-    });
-    
-    gifEncoder.on('finished', function(blob) {
-      // Check file size
-      const sizeMB = blob.size / (1024 * 1024);
-      console.log(`📊 GIF size: ${sizeMB.toFixed(2)} MB`);
-      
-      if (sizeMB > 15) {
-        console.log('⚠️ Warning: GIF exceeds 15MB. Consider recording shorter duration.');
-      }
-      
-      // Save the GIF
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'friendswemade.gif';
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
-      
-      console.log('✅ GIF saved as friendswemade.gif to your Downloads folder!');
-    });
-    
-    gifEncoder.on('progress', function(progress) {
-      console.log(`🎬 Rendering GIF: ${Math.round(progress * 100)}%`);
-    });
-    
-    gifFrameCount = 0;
-    isRecordingGif = true;
-    console.log('📸 GIF recording started! (Max 10 seconds at 15fps)');
-    console.log('   Press G again to stop, or recording will auto-stop at max frames.');
-  } catch (error) {
-    console.error('❌ Error starting GIF recording:', error);
-    alert('Failed to start GIF recording. Check console for details.');
-  }
-}
-
-function stopGifRecording() {
-  if (isRecordingGif && gifEncoder) {
-    isRecordingGif = false;
-    
-    if (gifFrameCount === 0) {
-      console.log('⚠️ No frames captured! GIF recording cancelled.');
-      return;
-    }
-    
-    console.log(`⏹️ GIF recording stopped! Captured ${gifFrameCount} frames.`);
-    console.log('   Rendering GIF... This may take 10-30 seconds...');
-    
-    try {
-      gifEncoder.render();
-    } catch (error) {
-      console.error('❌ Error rendering GIF:', error);
-      alert('Failed to render GIF. Check console for details.');
-    }
-  }
-}
-
-function captureGifFrame() {
-  if (!gifEncoder || !isRecordingGif) {
-    return;
-  }
-  
-  if (gifFrameCount >= gifMaxFrames) {
-    // Auto-stop if max frames reached
-    console.log('⏰ Max frames reached! Stopping recording...');
-    stopGifRecording();
-    return;
-  }
-  
-  try {
-    // Get canvas element and add frame to GIF
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-      gifEncoder.addFrame(canvas, {
-        delay: gifFrameDelay,
-        copy: true
-      });
-      gifFrameCount++;
-    }
-  } catch (error) {
-    console.error('❌ Error capturing GIF frame:', error);
-  }
 }

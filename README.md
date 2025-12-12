@@ -10,7 +10,6 @@ An interactive web-based portrait generator using p5.js. Create unique, glitchy 
 - 🖼️ **Image Mode**: Toggle to use a static image instead
 - 💾 **Save Your Work**: Click anywhere to save your creation as a JPEG
 - 🎥 **Video Recording**: Record your creative process and save as WebM video
-- 📸 **GIF Recording**: Create animated GIFs (max 10 seconds at 15fps, under 15MB)
 - 🎭 **Grayscale Filter**: Automatic grayscale effect for an artistic look
 - ✨ **Trailing Effect**: Subtle fade creates a dreamy, layered appearance
 - 🔄 **Dual Control Modes**: Switch seamlessly between mouse and hand tracking
@@ -76,7 +75,6 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 - **Press H**: Toggle between mouse and hand tracking mode
 - **Press W**: Toggle between webcam and image mode
 - **Press R**: Start/Stop video recording (saves as WebM video)
-- **Press G**: Start/Stop GIF recording (saves as animated GIF, max 15MB)
 - **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
 
 #### Mouse Mode (Default)
@@ -97,16 +95,6 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 - Saves as `friendswemade_recording.webm` to Downloads
 - Records at 30fps with high quality (2.5 Mbps bitrate)
 - WebM format (can be converted to MP4 using online tools if needed)
-
-#### GIF Recording Mode
-- Press **G** to start recording a GIF
-- Orange "GIF" indicator shows frame count in top-left corner
-- Captures at 15fps for smooth animation with reasonable file size
-- Maximum 150 frames (10 seconds) to keep under 15MB limit
-- Press **G** again to stop, or auto-stops at max frames
-- Saves as `friendswemade.gif` to Downloads
-- Perfect for sharing on social media or messaging apps
-- Rendering may take a few seconds after stopping
 
 ### Tips for Best Results
 
@@ -186,7 +174,6 @@ imperfect-pictures/
 - [p5.js](https://p5js.org/) - Creative coding library
 - [ml5.js](https://ml5js.org/) - Machine learning library for hand tracking
 - [ml5.handPose](https://docs.ml5js.org/#/reference/handpose) - Real-time hand pose detection
-- [gif.js](https://github.com/jnordberg/gif.js) - JavaScript GIF encoder
 - MediaRecorder API - Video recording
 - HTML5 Canvas
 - WebRTC (for webcam access)
@@ -237,14 +224,13 @@ imperfect-pictures/
 Potential features to add:
 - ✅ ~~Hand tracking control~~ (Implemented!)
 - ✅ ~~Video recording~~ (Implemented!)
-- ✅ ~~GIF export~~ (Implemented!)
 - Color mode toggle
 - Adjustable brush size controls
 - Multiple filter options
 - Two-hand support for multi-point drawing
 - Full body pose detection
 - MP4 export option (currently WebM)
-- Variable GIF quality/duration settings
+- GIF export feature (future)
 - Touch support for mobile
 - Gallery of saved portraits
 - Collaborative portraits with multiple people
