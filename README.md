@@ -5,7 +5,7 @@ An interactive web-based portrait generator using p5.js. Create unique, glitchy 
 ## Features
 
 - 🎨 **Interactive Drawing**: Paint with image slices that follow your mouse or hand
-- ✋ **Hand Tracking**: Use MediaPipe hand tracking to control painting with your index finger
+- ✋ **Hand Tracking**: Use ml5.js hand tracking to control painting with your index finger
 - 📹 **Webcam Integration**: Use your webcam as a live drawing source
 - 🖼️ **Image Mode**: Toggle to use a static image instead
 - 💾 **Save Your Work**: Click anywhere to save your creation as a JPEG
@@ -79,12 +79,13 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 - Move your mouse to paint with image slices
 - Slice size varies based on mouse position (10-200px)
 
-#### Hand Tracking Mode
+#### Hand Tracking Mode (ml5.js)
 - Press **H** to enable
 - Point with your index finger to paint - your fingertip controls the brush
 - Blue crosshair appears when your hand is detected
 - Move your hand around in front of the camera to create your portrait
 - Works best with one hand clearly visible to the camera
+- ml5.js provides smooth, reliable hand tracking with minimal setup
 
 ### Tips for Best Results
 
@@ -161,7 +162,8 @@ imperfect-pictures/
 ## Technologies Used
 
 - [p5.js](https://p5js.org/) - Creative coding library
-- [MediaPipe Hands](https://google.github.io/mediapipe/solutions/hands.html) - Real-time hand tracking
+- [ml5.js](https://ml5js.org/) - Machine learning library for hand tracking
+- [ml5.handPose](https://docs.ml5js.org/#/reference/handpose) - Real-time hand pose detection
 - HTML5 Canvas
 - WebRTC (for webcam access)
 - JavaScript ES6+
@@ -184,11 +186,12 @@ imperfect-pictures/
 - **Check camera permissions**: Hand tracking requires webcam access
 - **Good lighting**: Ensure your hand is well-lit and clearly visible
 - **Show your palm**: Make sure fingers are spread and visible to camera
-- **Browser compatibility**: Works best in Chrome/Edge
-- **Console errors**: Press F12 and check for MediaPipe loading errors
+- **Browser compatibility**: Works best in Chrome/Edge/Firefox
+- **Console errors**: Press F12 and check for ml5.js loading errors
 - **Distance**: Try adjusting your distance from the camera (arm's length is good)
 - **One hand**: Use only one hand for best results
-- **Refresh**: Sometimes reloading the page helps initialize MediaPipe
+- **Wait for model**: ml5.js needs a moment to load the model on first run
+- **Refresh**: Sometimes reloading the page helps initialize ml5.js
 
 ### Image not loading
 - Verify the image exists in `/assets` folder

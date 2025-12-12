@@ -4,19 +4,22 @@ let useWebcam = true;
 let uploadInput;
 let defaultImgPath = '/assets/joo.jpeg';
 
-// Hand tracking variables
+// Hand tracking variables (ml5.js)
 let useHandTracking = false;
-let hands;
+let handPose;
+let hands = [];
 let handX = 0;
 let handY = 0;
 let handDetected = false;
-let videoElement;
 let drawX = 0;
 let drawY = 0;
 
 function preload() {
-  // Optional: Load default image if it exists
-  // Comment this out if you don't have a default image
+  // Initialize ml5 handPose model
+  handPose = ml5.handPose();
+  
+  // Optional: Load default image asynchronously
+  // Commented out to avoid errors if file doesn't exist
   // img = loadImage(defaultImgPath);
 }
 
@@ -30,8 +33,8 @@ function setup() {
   video.size(width, height);
   video.hide();
   
-  // Get the underlying video element for MediaPipe
-  videoElement = video.elt;
+  // Start hand detection with ml5
+  handPose.detectStart(video, gotHands);
   
   // Optional: Load default image asynchronously (won't block if missing)
   loadImage(defaultImgPath, 
@@ -43,9 +46,6 @@ function setup() {
       console.log('No default image found. Webcam mode only.');
     }
   );
-
-  // Initialize MediaPipe Hand Tracking
-  initHandTracking();
   
   // Set up UI
   setupUI();
@@ -59,62 +59,33 @@ function setup() {
   //uploadInput.position(10, 40);
 }
 
-function initHandTracking() {
-  if (typeof Hands !== 'undefined') {
-    hands = new Hands({
-      locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-      }
-    });
-    
-    hands.setOptions({
-      maxNumHands: 1,
-      modelComplexity: 1,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
-    
-    hands.onResults(onHandResults);
-    console.log('MediaPipe Hand Tracking initialized!');
-  } else {
-    console.log('MediaPipe not loaded, hand tracking disabled');
-  }
+function setupUI() {
+  // UI panel removed - hand tracking controlled via H key only
+  console.log('✋ Press H to toggle hand tracking, W to toggle webcam/image mode, Click to save');
 }
 
-function onHandResults(results) {
-  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+// Callback function for when handPose detects hands
+function gotHands(results) {
+  hands = results;
+  
+  // Check if hand is detected
+  if (hands.length > 0) {
     handDetected = true;
-    const landmarks = results.multiHandLandmarks[0];
+    let hand = hands[0];
     
-    // Use index finger tip (landmark 8) for precise control
-    const indexFingerTip = landmarks[8];
+    // Use index finger tip (keypoint 8) for precise control
+    let indexFingerTip = hand.keypoints[8];
     
-    // Map to canvas coordinates (flip X for mirror effect)
-    handX = (1 - indexFingerTip.x) * width;
-    handY = indexFingerTip.y * height;
+    // Update hand position
+    handX = indexFingerTip.x;
+    handY = indexFingerTip.y;
   } else {
     handDetected = false;
   }
 }
 
-async function detectHand() {
-  if (hands && videoElement && videoElement.readyState === 4) {
-    await hands.send({image: videoElement});
-  }
-}
-
-function setupUI() {
-  // UI panel removed - hand tracking controlled via H key only
-  console.log('Press H to toggle hand tracking, W to toggle webcam/image mode, Click to save');
-}
-
 function draw() {
   background(244, 243, 239, 2); // subtle trailing effect
-
-  // Detect hand if hand tracking is enabled
-  if (useHandTracking && frameCount % 2 === 0) {
-    detectHand();
-  }
 
   // Determine drawing position
   if (useHandTracking && handDetected) {
@@ -178,7 +149,7 @@ function keyPressed() {
 }
 
 function toggleHandTracking() {
-  if (!hands) {
+  if (!handPose) {
     console.log("Hand tracking not available");
     return;
   }
@@ -209,4 +180,3 @@ function mouseClicked() {
   // This function is called when the mouse is clicked
   saveCanvas('selfportrait_camgirl', 'jpg'); // Saves the canvas as 'myCanvasImage.png'
 }
-
