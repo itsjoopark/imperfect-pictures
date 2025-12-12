@@ -219,7 +219,11 @@ function handleFile(file) {
 }
 
 function mouseClicked() {
-  // This function is called when the mouse is clicked
+  // Save the canvas
   saveCanvas('friendswemade', 'jpg');
   console.log('💾 Saved as friendswemade.jpg');
+  
+  // Reset canvas to blank after saving
+  background(244, 243, 239);
+  console.log('🎨 Canvas reset - ready for new portrait!');
 }
