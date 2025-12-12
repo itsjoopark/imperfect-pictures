@@ -13,6 +13,10 @@ let handY = 0;
 let handDetected = false;
 let drawX = 0;
 let drawY = 0;
+// Smoothing variables
+let smoothedHandX = 0;
+let smoothedHandY = 0;
+let smoothing = 0.3; // Lower = smoother but more lag, higher = more responsive
 
 function preload() {
   // Initialize ml5 handPose model
@@ -76,9 +80,16 @@ function gotHands(results) {
     // Use index finger tip (keypoint 8) for precise control
     let indexFingerTip = hand.keypoints[8];
     
-    // Update hand position
-    handX = indexFingerTip.x;
-    handY = indexFingerTip.y;
+    // Update hand position with smoothing
+    let targetX = indexFingerTip.x;
+    let targetY = indexFingerTip.y;
+    
+    // Apply exponential smoothing for fluid motion
+    smoothedHandX = smoothedHandX + (targetX - smoothedHandX) * smoothing;
+    smoothedHandY = smoothedHandY + (targetY - smoothedHandY) * smoothing;
+    
+    handX = smoothedHandX;
+    handY = smoothedHandY;
   } else {
     handDetected = false;
   }
@@ -115,20 +126,7 @@ function draw() {
     }
   }
   
-  // Visual feedback for hand tracking
-  if (useHandTracking && handDetected) {
-    push();
-    noFill();
-    stroke(100, 200, 255);
-    strokeWeight(3);
-    circle(handX, handY, 25);
-    // Add crosshair for precision
-    stroke(100, 200, 255);
-    strokeWeight(2);
-    line(handX - 15, handY, handX + 15, handY);
-    line(handX, handY - 15, handX, handY + 15);
-    pop();
-  }
+  // No visual feedback - clean interface
 }
 
 function keyPressed() {
