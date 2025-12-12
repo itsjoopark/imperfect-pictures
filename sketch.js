@@ -81,7 +81,8 @@ function gotHands(results) {
     let indexFingerTip = hand.keypoints[8];
     
     // Update hand position with smoothing
-    let targetX = indexFingerTip.x;
+    // Mirror X coordinate so hand moves in same direction as image
+    let targetX = width - indexFingerTip.x;
     let targetY = indexFingerTip.y;
     
     // Apply exponential smoothing for fluid motion
@@ -116,13 +117,11 @@ function draw() {
       let w = constrain(drawX % 200, 10, 200);
       let h = constrain(drawY % 200, 10, 200);
       image(source, drawX, drawY, w, h);
-      filter(GRAY);
     } else if (!useWebcam && img) {
       // For image mode
       let w = constrain(drawX % 200, 10, 200);
       let h = constrain(drawY % 200, 10, 200);
       image(source, drawX, drawY, w, h);
-      filter(GRAY);
     }
   }
   
