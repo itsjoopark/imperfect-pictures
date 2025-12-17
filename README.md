@@ -3,10 +3,10 @@
 An interactive web-based portrait generator using p5.js and MediaPipe API (HandPose). Create unique, imperfect pictures by painting with your webcam or image slices that follow your mouse movements.
 
 ## How to 
-Press 'H' key - enable handtracking control effects 
-Press 'R' key - record video; Press again to stop recording and save to downloads  
-Click anywhere on the canvas to save your imperfect picture and reset the board 
-Note: Ensure you are in a well-lit environment for best results 
+- Press 'H' key - enable handtracking control effects 
+- Press 'R' key - record video; Press again to stop recording and save to downloads  
+- Click anywhere on the canvas to save your imperfect picture and reset the board 
+- Note: Ensure you are in a well-lit environment for best results 
 
 ## Getting Started
 
