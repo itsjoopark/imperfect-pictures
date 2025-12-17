@@ -16,50 +16,6 @@ An interactive web-based portrait generator using p5.js and MediaPipe API (HandP
 - A local web server (see setup options below)
 - Optional: A webcam for live video mode
 
-### Setup Instructions
-
-1. **Clone or download this repository**
-
-```bash
-git clone <your-repo-url>
-cd imperfect-pictures
-```
-
-2. **Add your default image** (optional)
-   - Place an image named `joo.jpeg` in the `/assets` folder
-   - Or update the `defaultImgPath` in `sketch.js` to point to your image
-
-3. **Start a local server**
-
-Choose one of these methods:
-
-**Option A: Python (if installed)**
-```bash
-# Python 3
-python -m http.server 8000
-
-# Python 2
-python -m SimpleHTTPServer 8000
-```
-
-**Option B: Node.js (if installed)**
-```bash
-npx http-server -p 8000
-```
-
-**Option C: PHP (if installed)**
-```bash
-php -S localhost:8000
-```
-
-**Option D: VS Code Live Server Extension**
-- Install the "Live Server" extension
-- Right-click on `index.html` and select "Open with Live Server"
-
-4. **Open in browser**
-   - Navigate to `http://localhost:8000`
-   - Allow webcam access when prompted (optional)
-
 #### Video Recording Mode
 - Press **R** to start recording your canvas
 - Red "REC" indicator appears in top-left corner
@@ -77,15 +33,6 @@ php -S localhost:8000
 5. **Click to save** whenever you're happy with your creation
 6. **Record your process** (R key) to capture the creation journey as a video
 
-#### Hand Tracking Tips
-1. **Good lighting is key** - make sure your hand is well-lit for better detection
-2. **Show your palm** - camera should see your hand clearly with fingers visible
-3. **Use your index finger** - point where you want to paint, fingertip controls the position
-4. **Experiment with gestures** - move your hand in sweeping motions, circles, or quick dabs
-5. **Distance matters** - being too close or too far can affect tracking accuracy
-6. **One hand works best** - tracking is optimized for single hand detection
-7. **The blue crosshair** shows where your index fingertip is detected
-8. **Combine with mouse mode** - switch between hand and mouse for varied compositions
 
 ## Technologies Used
 
@@ -97,12 +44,6 @@ php -S localhost:8000
 - WebRTC (for webcam access)
 - JavaScript ES6+
 
-## Browser Compatibility
-
-- ✅ Chrome/Edge (recommended)
-- ✅ Firefox
-- ✅ Safari (may require HTTPS for webcam)
-- ⚠️ Mobile browsers (limited webcam support)
 
 ## Troubleshooting
 
