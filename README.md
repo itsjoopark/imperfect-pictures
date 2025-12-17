@@ -1,18 +1,12 @@
 # Imperfect Pictures
 
-An interactive web-based portrait generator using p5.js. Create unique, glitchy artwork by painting with webcam or image slices that follow your mouse movements.
+An interactive web-based portrait generator using p5.js and MediaPipe API (HandPose). Create unique, imperfect pictures by painting with your webcam or image slices that follow your mouse movements.
 
-## Features
-
-- 🎨 **Interactive Drawing**: Paint with image slices that follow your mouse or hand
-- ✋ **Hand Tracking**: Use ml5.js hand tracking to control painting with your index finger
-- 📹 **Webcam Integration**: Use your webcam as a live drawing source
-- 🖼️ **Image Mode**: Toggle to use a static image instead
-- 💾 **Save Your Work**: Click anywhere to save your creation as a JPEG
-- 🎥 **Video Recording**: Record your creative process and save as WebM video
-- 🎭 **Grayscale Filter**: Automatic grayscale effect for an artistic look
-- ✨ **Trailing Effect**: Subtle fade creates a dreamy, layered appearance
-- 🔄 **Dual Control Modes**: Switch seamlessly between mouse and hand tracking
+## How to 
+Press 'H' key - enable handtracking control effects 
+Press 'R' key - record video; Press again to stop recording and save to downloads  
+Click anywhere on the canvas to save your imperfect picture and reset the board 
+Note: Ensure you are in a well-lit environment for best results 
 
 ## Getting Started
 
@@ -66,28 +60,6 @@ php -S localhost:8000
    - Navigate to `http://localhost:8000`
    - Allow webcam access when prompted (optional)
 
-## How to Use
-
-### Controls
-
-All controls are keyboard-based for a minimal, distraction-free experience:
-
-- **Press H**: Toggle between mouse and hand tracking mode
-- **Press W**: Toggle between webcam and image mode
-- **Press R**: Start/Stop video recording (saves as WebM video)
-- **Click Anywhere**: Save your portrait as a JPEG file (downloads automatically)
-
-#### Mouse Mode (Default)
-- Move your mouse to paint with image slices
-- Slice size varies based on mouse position (10-200px)
-
-#### Hand Tracking Mode (ml5.js)
-- Press **H** to enable
-- Point with your index finger to paint - your fingertip controls the brush
-- Move your hand around in front of the camera to create your portrait
-- Works best with one hand clearly visible to the camera
-- ml5.js provides smooth, reliable hand tracking with minimal setup
-
 #### Video Recording Mode
 - Press **R** to start recording your canvas
 - Red "REC" indicator appears in top-left corner
@@ -114,60 +86,6 @@ All controls are keyboard-based for a minimal, distraction-free experience:
 6. **One hand works best** - tracking is optimized for single hand detection
 7. **The blue crosshair** shows where your index fingertip is detected
 8. **Combine with mouse mode** - switch between hand and mouse for varied compositions
-
-## Customization
-
-### Change Colors
-
-Edit the background color in `sketch.js`:
-
-```javascript
-background(244, 243, 239); // RGB values
-```
-
-### Adjust Trailing Effect
-
-Modify the alpha value (last parameter) in the draw function:
-
-```javascript
-background(244, 243, 239, 2); // Lower = stronger trails
-```
-
-### Change Slice Size Range
-
-Adjust the constraints in the draw function:
-
-```javascript
-let w = constrain(mouseX % 200, 10, 200); // min: 10, max: 200
-let h = constrain(mouseY % 200, 10, 200);
-```
-
-### Enable File Upload
-
-Uncomment these lines in `index.html`:
-
-```html
-<!-- <input type="file" id="upload-input" accept="image/*"> -->
-```
-
-And in `sketch.js`:
-
-```javascript
-//uploadInput = createFileInput(handleFile);
-//uploadInput.position(10, 40);
-```
-
-## Project Structure
-
-```
-imperfect-pictures/
-├── index.html          # Main HTML file
-├── sketch.js           # p5.js sketch code
-├── style.css           # Styling
-├── assets/             # Image assets
-│   └── README.md       # Assets directory info
-└── README.md           # This file
-```
 
 ## Technologies Used
 
@@ -204,21 +122,6 @@ imperfect-pictures/
 - **Wait for model**: ml5.js needs a moment to load the model on first run
 - **Refresh**: Sometimes reloading the page helps initialize ml5.js
 
-### Image not loading
-- Verify the image exists in `/assets` folder
-- Check the file name matches `defaultImgPath` in sketch.js
-- Ensure you're running a local server (not opening file:// directly)
-
-### Canvas not showing
-- Make sure you're running a local server
-- Check browser console for errors (F12)
-- Try a different browser
-
-### Performance issues
-- Hand tracking runs every other frame to maintain performance
-- Close other camera-using applications
-- Try disabling hand tracking if experiencing lag
-
 ## Future Enhancements
 
 Potential features to add:
@@ -241,8 +144,6 @@ MIT License - Feel free to use and modify for your own projects!
 
 ## Credits
 
-Created with p5.js - a JavaScript library that makes coding accessible for artists, designers, educators, and beginners.
-
----
+Created with p5.js && Ml5.js - a JavaScript library that makes coding accessible for artists, designers, educators, and beginners.
 
 **Enjoy creating your imperfect pictures! 🎨**
